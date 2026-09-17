@@ -1,14 +1,49 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  body { @apply bg-[#f7f8f4] text-stone-800 antialiased dark:bg-stone-950 dark:text-stone-100; font-family: Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
-  :focus-visible { @apply outline outline-2 outline-offset-4 outline-emerald-600; }
+  body {
+    @apply text-stone-800 antialiased dark:text-stone-100;
+    font-family: "Pretendard Variable", Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    background: radial-gradient(ellipse at 15% 12%, #fffdf6 0%, transparent 55%), linear-gradient(145deg, #faf5eb 0%, #f7e9dd 55%, #f2d9c9 100%);
+    background-attachment: fixed;
+    min-height: 100dvh;
+  }
+  .dark body {
+    background: radial-gradient(ellipse at 15% 12%, #352b26 0%, transparent 55%), linear-gradient(145deg, #211e1c, #2e2420);
+    background-attachment: fixed;
+  }
+  :focus-visible { @apply outline outline-2 outline-offset-4 outline-[#a16f51] dark:outline-orange-200; }
   html { color-scheme: light; }
   html.dark { color-scheme: dark; }
 }
 @layer components {
-  .icon-button { @apply flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-500 hover:border-stone-400 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-300; }
-  .link-card { @apply flex items-center gap-4 rounded-2xl border border-stone-200/80 bg-white px-5 py-5 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md motion-reduce:transform-none dark:border-stone-800 dark:bg-stone-900 dark:hover:border-emerald-800; }
+  .icon-button {
+    @apply flex h-10 w-10 items-center justify-center rounded-full border border-white/70 bg-white/40 text-stone-600 backdrop-blur-xl transition-colors hover:bg-white/70 dark:border-white/10 dark:bg-white/5 dark:text-stone-300 dark:hover:bg-white/10;
+  }
+  .profile-portrait {
+    padding: 5px;
+    border: 1px solid rgb(255 255 255 / 85%);
+    border-radius: 50%;
+    background: rgb(255 255 255 / 45%);
+    box-shadow: 0 12px 30px -12px rgb(114 72 46 / 35%), 0 2px 5px rgb(114 72 46 / 6%);
+  }
+  .dark .profile-portrait { border-color: rgb(255 255 255 / 20%); background: rgb(255 255 255 / 8%); }
+  .link-card {
+    @apply flex items-center gap-4 rounded-3xl border border-white/80 bg-white/50 px-5 py-5 backdrop-blur-xl dark:border-white/10 dark:bg-white/5;
+    box-shadow: 0 6px 24px -12px rgb(118 77 49 / 15%), inset 0 1px 0 rgb(255 255 255 / 45%);
+    transition: background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  }
+  .link-icon { @apply border border-white/60 bg-white/50 text-[#8b6753] dark:border-white/5 dark:bg-white/5 dark:text-orange-200/80; }
+  @media (hover: hover) {
+    .link-card:hover { background-color: rgb(255 255 255 / 72%); transform: translateY(-2px); box-shadow: 0 10px 28px -12px rgb(118 77 49 / 20%); }
+    .dark .link-card:hover { background-color: rgb(255 255 255 / 9%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .link-card { transition: none; }
+    .link-card:hover { transform: none; }
+  }
 }
