@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body { @apply bg-[#f7f8f4] text-stone-800 antialiased dark:bg-stone-950 dark:text-stone-100; font-family: Arial, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif; }
+  :focus-visible { @apply outline outline-2 outline-offset-4 outline-emerald-600; }
+  html { color-scheme: light; }
+  html.dark { color-scheme: dark; }
+}
+@layer components {
+  .icon-button { @apply flex h-10 w-10 items-center justify-center rounded-full border border-stone-200 bg-white text-stone-500 hover:border-stone-400 dark:border-stone-800 dark:bg-stone-900 dark:text-stone-300; }
+  .link-card { @apply flex items-center gap-4 rounded-2xl border border-stone-200/80 bg-white px-5 py-5 shadow-sm transition hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-md motion-reduce:transform-none dark:border-stone-800 dark:bg-stone-900 dark:hover:border-emerald-800; }
+}
