@@ -13,12 +13,12 @@ export async function POST(_request: Request, { params }: { params: { id: string
     if (!db) {
       return NextResponse.json({ recorded: false, error: "클릭 저장소가 설정되지 않았습니다." }, { status: 503 });
     }
-    await db.collection<{ _id: string; clicks: number; updatedAt: Date }>("link_clicks").updateOne(
+    const record = await db.collection<{ _id: string; clicks: number; updatedAt: Date }>("link_clicks").findOneAndUpdate(
       { _id: params.id },
       { $inc: { clicks: 1 }, $set: { updatedAt: new Date() } },
-      { upsert: true },
+      { upsert: true, returnDocument: "after" },
     );
-    return NextResponse.json({ recorded: true });
+    return NextResponse.json({ recorded: true, clicks: record!.clicks });
   } catch {
     console.error("링크 클릭 기록에 실패했습니다.");
     return NextResponse.json({ recorded: false, error: "클릭 기록에 실패했습니다." }, { status: 503 });

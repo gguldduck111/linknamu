@@ -11,6 +11,25 @@ export function ProfilePage() {
   const [dark, setDark] = useState(false);
   const [copied, setCopied] = useState(false);
   const [message, setMessage] = useState("");
+  const [clicks, setClicks] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    const controller = new AbortController();
+    async function loadClicks() {
+      try {
+        const response = await fetch("/api/links/clicks", { cache: "no-store", signal: controller.signal });
+        if (!response.ok) return;
+        const data: { clicks: Record<string, number> } = await response.json();
+        setClicks((current) => Object.fromEntries(links.map((link) => [
+          link.id, Math.max(current[link.id] ?? 0, data.clicks[link.id] ?? 0),
+        ])));
+      } catch {
+        // Keep the initial counts when the store is temporarily unavailable.
+      }
+    }
+    void loadClicks();
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     setDark(document.documentElement.classList.contains("dark"));
@@ -40,7 +59,14 @@ export function ProfilePage() {
   }
 
   function recordClick(id: string) {
-    void fetch(`/api/links/${id}/click`, { method: "POST", keepalive: true }).catch(() => {});
+    void fetch(`/api/links/${id}/click`, { method: "POST", keepalive: true })
+      .then(async (response) => {
+        if (!response.ok) return;
+        const data: { recorded: boolean; clicks: number } = await response.json();
+        if (data.recorded) {
+          setClicks((current) => ({ ...current, [id]: Math.max(current[id] ?? 0, data.clicks) }));
+        }
+      }).catch(() => {});
   }
 
   return (
@@ -72,7 +98,10 @@ export function ProfilePage() {
               <a key={link.id} href={link.url} target={link.icon === "mail" ? undefined : "_blank"} rel="noopener noreferrer" onClick={() => recordClick(link.id)} className="link-card group">
                 <span className="link-icon flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"><Icon size={21} /></span>
                 <span className="min-w-0 flex-1"><span className="block text-[15px] font-semibold tracking-tight">{link.title}</span><span className="mt-1 block break-words text-xs leading-relaxed text-stone-500 dark:text-stone-400">{link.description}</span></span>
-                <ArrowUpRight size={18} className="shrink-0 text-stone-400" /><span className="sr-only">{link.icon === "mail" ? "이메일 보내기" : "새 탭에서 열기"}</span>
+                <span className="flex shrink-0 flex-col items-end gap-2 text-stone-500 dark:text-stone-400">
+                  <ArrowUpRight size={18} aria-hidden="true" />
+                  <span className="whitespace-nowrap text-[11px] tabular-nums" aria-label={`클릭 수 ${clicks[link.id] ?? 0}회`}>{(clicks[link.id] ?? 0).toLocaleString("ko-KR")}회</span>
+                </span><span className="sr-only">{link.icon === "mail" ? "이메일 보내기" : "새 탭에서 열기"}</span>
               </a>
             );
           })}
